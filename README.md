@@ -1,32 +1,35 @@
-# Cybersecurity NLP Classification  
-## Classical ML vs Transformer Models for Threat Categorization
-
+# Cybersecurity NLP Classification
 ---
 
-Predictive NLP system for classifying cybersecurity news articles into threat categories.
+## Classical ML vs Transformer Models for Threat Categorization
+---
 
-This project compares **domain-engineered classical machine learning models** with a **fine-tuned transformer (DeBERTa)** to evaluate performance on a small, imbalanced, domain-specific corpus.
+End-to-end NLP classification pipeline for cybersecurity threat categorization.
+
+This project compares domain-engineered classical machine learning models with a fine-tuned transformer (DeBERTa) to evaluate performance on a small, imbalanced, domain-specific corpus.
 
 ---
 
 ## Problem Framing
+---
 
 Four-class supervised text classification problem:
 
-- **Vulnerability** (36%)
-- **Malware** (35%)
-- **Cyber_Attack** (19%)
-- **Data_Breach** (10%)
+- **Vulnerability (36%)**
+- **Malware (35%)**
+- **Cyber_Attack (19%)**
+- **Data_Breach (10%)**
 
-Dataset size: **3,742** cybersecurity news articles
+**Dataset size:** 3,742 cybersecurity news articles
 
-Research Question:
+**Research Question**
 
 > Can domain-engineered classical ML outperform a fine-tuned transformer on a small, imbalanced cybersecurity dataset?
 
 ---
 
 ## System Pipeline
+---
 
 ### 1. Text Processing Layer
 
@@ -37,6 +40,7 @@ Research Question:
 - Lemmatization  
 - Bigram / trigram analysis  
 - Part-of-speech tagging  
+- Indicator-of-Compromise (IOC) regex detection  
 
 ---
 
@@ -57,15 +61,16 @@ This hybrid representation captures both linguistic structure and technical thre
 ---
 
 ## Modeling Layer
+---
 
 ### Classical Machine Learning
 
-Feature Representation:
+**Feature Representation**
 - Word-level TF-IDF (1–3 grams)  
 - Character-level TF-IDF (3–6 grams)  
 - Domain-engineered features appended to sparse matrix  
 
-Models Evaluated:
+**Models Evaluated**
 - Naive Bayes  
 - Decision Tree  
 - Maximum Entropy  
@@ -75,7 +80,7 @@ Models Evaluated:
 - K-Nearest Neighbors  
 
 **Best Performing Model:** Tuned Logistic Regression  
-Test Accuracy: ~83%
+**Test Accuracy:** ~83%
 
 ---
 
@@ -83,34 +88,35 @@ Test Accuracy: ~83%
 
 Fine-tuned **DeBERTa-v3-base** using HuggingFace.
 
-Training Strategy:
+**Training Strategy**
 - Stratified 80/10/10 split  
 - Class weights  
 - Focal loss  
 - Hyperparameter tuning (Optuna)  
 - 512-token context window  
 
-Test Accuracy: ~70.7%
+**Test Accuracy:** ~70.7%
 
 Primary confusion observed between **Cyber_Attack** and **Malware** classes.
 
 ---
 
-## Key Insight
+## Results & Insight
+---
 
 Despite transformer dominance in large-scale NLP tasks, a tuned classical model outperformed DeBERTa on this dataset.
 
-Contributing factors:
-
+**Contributing factors**
 - Limited dataset size (~3.7K samples)  
 - High semantic overlap across threat categories  
 - Domain-engineered lexical signals captured class distinctions effectively  
 
-This highlights that **feature engineering + classical ML remains competitive for small, domain-specific corpora**.
+This highlights that feature engineering + classical ML remains competitive for small, domain-specific corpora.
 
 ---
 
 ## Practical Applications
+---
 
 - Automated cybersecurity news labeling  
 - Threat triage support  
@@ -122,6 +128,7 @@ This highlights that **feature engineering + classical ML remains competitive fo
 
 ## Repository Structure
 
+```
 Cybersecurity-NLP-Classification/
 │
 ├── data/
@@ -140,10 +147,12 @@ Cybersecurity-NLP-Classification/
 ├── requirements.txt
 ├── README.md
 └── LICENSE
+```
 
 ---
 
 ## Installation
+---
 
 git clone <your_repo_url>  
 cd Cybersecurity-NLP-Classification  
@@ -152,6 +161,7 @@ pip install -r requirements.txt
 ---
 
 ## Technologies Used
+---
 
 - Python  
 - scikit-learn  
@@ -163,6 +173,10 @@ pip install -r requirements.txt
 - NumPy  
 - Matplotlib  
 - Seaborn  
+- openpyxl  
+- datasets  
+- tqdm  
+- Jupyter / notebook  
 
 ---
 
