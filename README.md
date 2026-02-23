@@ -1,208 +1,171 @@
-Cybersecurity NLP Classification
+# Cybersecurity NLP Classification  
+## Classical ML vs Transformer Models for Threat Categorization
 
-Classical Machine Learning vs Transformer Models for Threat Categorization
+---
 
-Project Overview
+Predictive NLP system for classifying cybersecurity news articles into threat categories.
 
-This project builds and compares classical machine learning models and transformer-based deep learning models for classifying cybersecurity news articles into threat categories.
+This project compares **domain-engineered classical machine learning models** with a **fine-tuned transformer (DeBERTa)** to evaluate performance on a small, imbalanced, domain-specific corpus.
 
-The goal is to evaluate whether domain-aware feature engineering with traditional machine learning can outperform a fine-tuned transformer model when working with a relatively small, imbalanced, and semantically dense corpus.
+---
 
-Dataset size: 3,742 cybersecurity news articles
-Classes:
+## Problem Framing
 
-Vulnerability (36%)
+Four-class supervised text classification problem:
 
-Malware (35%)
+- **Vulnerability** (36%)
+- **Malware** (35%)
+- **Cyber_Attack** (19%)
+- **Data_Breach** (10%)
 
-Cyber_Attack (19%)
+Dataset size: **3,742** cybersecurity news articles
 
-Data_Breach (10%)
+Research Question:
 
-This is a four-class supervised text classification problem.
+> Can domain-engineered classical ML outperform a fine-tuned transformer on a small, imbalanced cybersecurity dataset?
 
-Research Question
+---
 
-Can domain-engineered classical machine learning models outperform a fine-tuned transformer model on a small, imbalanced cybersecurity dataset?
+## System Pipeline
 
-Data Processing Pipeline
-Text Preprocessing
+### 1. Text Processing Layer
 
-Merged title and article body
+- Merge title + article body  
+- Lowercasing  
+- URL and punctuation removal  
+- Stopword removal  
+- Lemmatization  
+- Bigram / trigram analysis  
+- Part-of-speech tagging  
 
-Lowercasing
+---
 
-URL and punctuation removal
+### 2. Domain Feature Engineering
 
-Stopword removal
+Cybersecurity-aware signals engineered into the feature matrix:
 
-Lemmatization
+- CVE pattern detection  
+- IP address detection  
+- Email detection  
+- File hash detection  
+- Threat keyword flags (ransomware, phishing, malware)  
+- Structural document features  
+- POS-based document characterization  
 
-Bigram and trigram analysis
+This hybrid representation captures both linguistic structure and technical threat indicators.
 
-Part-of-speech tagging
+---
 
-Indicator-of-Compromise (IOC) regex detection
+## Modeling Layer
 
-Domain Feature Engineering
+### Classical Machine Learning
 
-Custom cybersecurity-aware signals were engineered to strengthen model performance:
+Feature Representation:
+- Word-level TF-IDF (1–3 grams)  
+- Character-level TF-IDF (3–6 grams)  
+- Domain-engineered features appended to sparse matrix  
 
-CVE pattern detection
+Models Evaluated:
+- Naive Bayes  
+- Decision Tree  
+- Maximum Entropy  
+- Logistic Regression  
+- Random Forest  
+- Gradient Boosting  
+- K-Nearest Neighbors  
 
-IP address detection
+**Best Performing Model:** Tuned Logistic Regression  
+Test Accuracy: ~83%
 
-Email detection
+---
 
-File hash detection
+### Transformer Model
 
-Threat keyword flags (ransomware, phishing, malware, etc.)
+Fine-tuned **DeBERTa-v3-base** using HuggingFace.
 
-Structural document features
+Training Strategy:
+- Stratified 80/10/10 split  
+- Class weights  
+- Focal loss  
+- Hyperparameter tuning (Optuna)  
+- 512-token context window  
 
-POS-based document characterization
+Test Accuracy: ~70.7%
 
-This hybrid approach captures both linguistic structure and technical threat indicators.
+Primary confusion observed between **Cyber_Attack** and **Malware** classes.
 
-Classical Machine Learning Models
+---
 
-Feature representation:
+## Key Insight
 
-Word-level TF-IDF (1–3 grams)
+Despite transformer dominance in large-scale NLP tasks, a tuned classical model outperformed DeBERTa on this dataset.
 
-Character-level TF-IDF (3–6 grams)
+Contributing factors:
 
-Domain-engineered features appended to TF-IDF matrix
+- Limited dataset size (~3.7K samples)  
+- High semantic overlap across threat categories  
+- Domain-engineered lexical signals captured class distinctions effectively  
 
-Models evaluated:
+This highlights that **feature engineering + classical ML remains competitive for small, domain-specific corpora**.
 
-Naïve Bayes
+---
 
-Decision Tree
+## Practical Applications
 
-Maximum Entropy
+- Automated cybersecurity news labeling  
+- Threat triage support  
+- Analyst workload reduction  
+- Threat distribution monitoring  
+- Security intelligence dashboards  
 
-Logistic Regression
+---
 
-Random Forest
-
-Gradient Boosting
-
-K-Nearest Neighbors
-
-Best Model: Tuned Logistic Regression
-
-Test Accuracy: approximately 83%
-
-Strong macro and weighted F1 scores
-
-Most balanced confusion matrix across classes
-
-Strong minority-class stability
-
-Result: Classical ML significantly outperformed baseline NLTK models (70–73% accuracy).
-
-Deep Learning Model: DeBERTa-v3-base
-
-A transformer model (DeBERTa-v3-base) was fine-tuned using HuggingFace.
-
-Training strategy:
-
-Stratified 80/10/10 train-validation-test split
-
-Class weights
-
-Custom focal loss
-
-Hyperparameter tuning via Optuna
-
-GPU training
-
-Context window: 512 tokens
-
-Test Performance
-
-Accuracy: approximately 70.7%
-
-Macro F1: 0.6718
-
-Weighted F1: 0.6998
-
-The model struggled primarily with semantic overlap between Cyber_Attack and Malware.
-
-Key Insight
-
-Despite transformer models typically outperforming classical approaches, the tuned Logistic Regression model achieved superior performance on this dataset.
-
-Primary reasons:
-
-Dataset size (~3,700 articles) is relatively small for deep learning
-
-Heavy semantic overlap between threat categories
-
-Domain-engineered lexical features captured threat-specific signals more effectively
-
-This project demonstrates that for small, imbalanced, domain-specific corpora, well-designed feature engineering combined with classical machine learning can outperform deep learning models.
-
-Practical Applications
-
-This system can:
-
-Automate cybersecurity news labeling
-
-Reduce analyst workload
-
-Improve threat triage speed
-
-Detect shifts in threat distributions
-
-Support real-time threat dashboards
-
-Project Structure
+## Repository Structure
 
 Cybersecurity-NLP-Classification/
+│
+├── data/
+│   └── TheHackerNews_Dataset.xlsx
+│
+├── notebooks/
+│   ├── 01_eda.ipynb
+│   ├── 02_feature_engineering.ipynb
+│   ├── 03_classical_ml.ipynb
+│   ├── 04_deberta_modeling.ipynb
+│   └── 05_deberta_hyperparam_tuning.ipynb
+│
+├── slides/
+│   └── presentation.pdf
+│
+├── requirements.txt
+├── README.md
+└── LICENSE
 
-data/
-TheHackerNews_Dataset.xlsx
+---
 
-notebooks/
-01_eda.ipynb
-02_feature_engineering.ipynb
-03_classical_ml.ipynb
-04_deberta_modeling.ipynb
-05_deberta_hyperparam_tuning.ipynb
+## Installation
 
-slides/
-presentation.pdf
+git clone <your_repo_url>  
+cd Cybersecurity-NLP-Classification  
+pip install -r requirements.txt  
 
-requirements.txt
-README.md
-LICENSE
+---
 
-Installation
+## Technologies Used
 
-git clone <your_repo_url>
-cd Cybersecurity-NLP-Classification
-pip install -r requirements.txt
+- Python  
+- scikit-learn  
+- NLTK  
+- HuggingFace Transformers  
+- PyTorch  
+- Optuna  
+- Pandas  
+- NumPy  
+- Matplotlib  
+- Seaborn  
 
-Technologies Used
+---
 
-Python
+## License
 
-scikit-learn
-
-NLTK
-
-HuggingFace Transformers
-
-PyTorch
-
-Optuna
-
-Pandas
-
-NumPy
-
-Matplotlib
-
-Seaborn
+MIT
